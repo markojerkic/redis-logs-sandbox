@@ -7,6 +7,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LogRepository extends CrudRepository<Log, String> {
-
-  Optional<Log> findFirstByIdIsLessThan(String id);
 }
