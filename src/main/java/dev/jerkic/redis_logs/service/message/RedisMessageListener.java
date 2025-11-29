@@ -1,6 +1,9 @@
 package dev.jerkic.redis_logs.service.message;
 
 import dev.jerkic.redis_logs.model.entity.LogLine;
+import dev.jerkic.redis_logs.service.TemplateRenderer;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -21,16 +24,21 @@ import tools.jackson.databind.ObjectMapper;
 public class RedisMessageListener extends TextWebSocketHandler implements MessageListener {
   private final ObjectMapper objectMapper;
   private final ConcurrentHashMap<WebSocketSession, Boolean> sessions = new ConcurrentHashMap<>();
+  private final TemplateRenderer templateRenderer;
 
   @Override
   @SneakyThrows
   public void onMessage(Message msg, byte @Nullable [] pattern) {
     var json = new String(msg.getBody());
     var logLine = this.objectMapper.readValue(json, LogLine.class);
-    log.info("Received log line: {}", logLine);
+
+    var logLineRendered =
+        this.templateRenderer.swapOobRender(
+            "index::logline", "beforeend:#log-list", Map.of("logs", List.of(logLine)));
+    log.debug("Rendered log line: {}", logLineRendered);
     this.sessions.forEach(
         (session, isOpen) -> {
-          this.sendMessage(session, json);
+          this.sendMessage(session, logLineRendered);
         });
   }
 
