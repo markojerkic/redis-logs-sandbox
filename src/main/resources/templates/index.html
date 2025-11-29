@@ -33,6 +33,9 @@
             th:class="'log ' + ${log.level}"
             th:fragment="logline"
             th:id="'log-' + ${log.id}"
+            th:data-log-id="${log.id}"
+            th:data-app-name="${log.app?.appName}"
+            th:data-instance-id="${log.app?.instanceId}"
           >
             <strong th:text="${log.level}">LEVEL</strong> -
             <span th:text="${log.message}">Message</span>

@@ -62,8 +62,6 @@ function handleScroll() {
 function handleOobSwap(event) {
     const elementId = event?.detail?.target?.id;
     if (elementId !== "log-list") return;
-    const childCount = event?.detail.target.children.length;
-    console.log("childCount", childCount);
 
     if (isScrollLocked) {
         scrollToBottom();

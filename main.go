@@ -16,11 +16,17 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
+type LogProducer struct {
+	AppName    string `json:"appName" faker:"oneof: user-service, order-service, payment-service, notification-service, analytics-service"`
+	InstanceId string `json:"instanceId" faker:"oneof: 192.168.1.10, 192.168.1.11, 192.168.1.12, 10.0.0.5, 10.0.0.6"`
+}
+
 type LogLine struct {
-	ID        int64  `json:"id" faker:"-"`
-	Level     string `json:"level" faker:"oneof: DEBUG, INFO, WARN, ERROR"`
-	Message   string `json:"message" faker:"sentence"`
-	Timestamp string `json:"timestamp" faker:"-"`
+	ID        int64        `json:"id" faker:"-"`
+	Level     string       `json:"level" faker:"oneof: DEBUG, INFO, WARN, ERROR"`
+	Message   string       `json:"message" faker:"sentence"`
+	Timestamp string       `json:"timestamp" faker:"-"`
+	App       *LogProducer `json:"app" faker:"-"`
 }
 
 type Worker struct {
@@ -52,6 +58,7 @@ func (w *Worker) Run(ctx context.Context) error {
 		logLine := w.logPool.Get().(*LogLine)
 
 		err := faker.FakeData(logLine)
+		err = faker.FakeData(logLine.App)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -59,7 +66,15 @@ func (w *Worker) Run(ctx context.Context) error {
 		now := time.Now()
 		sqliteTimestamp := now.Format("2006-01-02 15:04:05.000")
 
-		result, err := w.db.Exec("insert into log_line (level, message, timestamp) values (?, ?, ?)", logLine.Level, logLine.Message, sqliteTimestamp)
+		// Ensure LogProducer exists
+		_, err = w.db.Exec("insert or ignore into log_producer (app_name, instance_id) values (?, ?)",
+			logLine.App.AppName, logLine.App.InstanceId)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		result, err := w.db.Exec("insert into log_line (level, message, timestamp, app_name, instance_id) values (?, ?, ?, ?, ?)",
+			logLine.Level, logLine.Message, sqliteTimestamp, logLine.App.AppName, logLine.App.InstanceId)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -84,7 +99,7 @@ func (w *Worker) Run(ctx context.Context) error {
 		}
 		i = (i + 1) % 100
 		if i == 0 {
-			log.Printf("%d - published ID=%d: %s", w.id, logLine.ID, logLine.Message)
+			log.Printf("%d - published ID=%d: %s, appName=%s, instanceId=%s", w.id, logLine.ID, logLine.Message, logLine.App.AppName, logLine.App.InstanceId)
 		}
 
 		w.logPool.Put(logLine)
@@ -113,26 +128,12 @@ func main() {
 	rdb.Ping(context.Background())
 
 	defer db.Close()
-	rows, err := db.Query("select * from log_line;")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer rows.Close()
-	for rows.Next() {
-		var id int
-		var level string
-		var message string
-		var timestamp string
-		err := rows.Scan(&id, &level, &message, &timestamp)
-		if err != nil {
-			log.Fatal(err)
-		}
-		log.Printf("[%s] %s - %s (%d)", timestamp, level, message, id)
-	}
 
 	logPool := &sync.Pool{
 		New: func() any {
-			return &LogLine{}
+			return &LogLine{
+				App: &LogProducer{},
+			}
 		},
 	}
 
