@@ -74,12 +74,17 @@ function setup() {
 
   scrollLockIndicator = document.getElementById("scroll-lock-indicator");
   if (!scrollLockIndicator) console.warn("Scroll lock indicator not found");
+  scrollToBottom();
 
   logList.addEventListener("scroll", handleScroll);
   document.body.addEventListener("htmx:oobAfterSwap", handleOobSwap);
 
-  scrollToBottom();
   updateScrollLockIndicator();
 }
 
 document.addEventListener("DOMContentLoaded", setup);
+document.addEventListener("htmx:afterSwap", (e) => {
+  if (e.detail?.isBoosted === true) {
+    setup();
+  }
+});

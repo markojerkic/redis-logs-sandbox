@@ -2,7 +2,6 @@ package dev.jerkic.redis_logs.service;
 
 import dev.jerkic.redis_logs.model.entity.LogLine;
 import dev.jerkic.redis_logs.repository.LogRepository;
-import dev.jerkic.redis_logs.service.message.RedisMessagePublisher;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class LogService {
   private final LogRepository logRepository;
-  private final RedisMessagePublisher redisMessagePublisher;
 
   public List<String> getApps() {
     return this.logRepository.findAllApps();

@@ -23,8 +23,8 @@ public class LogController {
 
   @GetMapping("/{appName}")
   public String logsByApp(@PathVariable String appName, Model model) {
-
     model.addAttribute("logs", this.logService.getAllLogs(appName));
+    model.addAttribute("appName", appName);
     return "logs";
   }
 }
