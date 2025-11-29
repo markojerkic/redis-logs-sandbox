@@ -28,7 +28,7 @@ public class RedisWebsocketConfig {
 
     var container = new RedisMessageListenerContainer();
     container.setConnectionFactory(connectionFactory);
-    container.addMessageListener(listener, new PatternTopic("ws.*"));
+    container.addMessageListener(listener, new PatternTopic("logs"));
     return container;
   }
 }
