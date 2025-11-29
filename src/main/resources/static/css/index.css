@@ -52,3 +52,30 @@ button:hover {
 .log.INFO {
     border-left-color: #007bff;
 }
+
+#log-list {
+    max-height: 500px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    background: white;
+}
+
+#scroll-lock-indicator {
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+#scroll-lock-indicator.scroll-lock-active {
+    background: #28a745;
+    color: white;
+}
+
+#scroll-lock-indicator.scroll-lock-inactive {
+    background: #6c757d;
+    color: white;
+}

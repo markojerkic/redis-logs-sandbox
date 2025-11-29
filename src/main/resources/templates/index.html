@@ -30,7 +30,12 @@
     </form>
 
     <div>
-      <h2>Logs</h2>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2>Logs</h2>
+        <div id="scroll-lock-indicator" class="scroll-lock-active">
+          Auto-scroll: ON
+        </div>
+      </div>
       <div id="log-list">
         <div
           th:each="log : ${logs}"
