@@ -1,6 +1,7 @@
 package dev.jerkic.redis_logs.service;
 
-import dev.jerkic.redis_logs.model.Log;
+import dev.jerkic.redis_logs.model.dto.CreatedLogLine;
+import dev.jerkic.redis_logs.model.entity.Log;
 import dev.jerkic.redis_logs.repository.LogRepository;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,13 +18,17 @@ public class LogService {
     return (List<Log>) this.logRepository.findAll();
   }
 
-  public Log createLog(String message, String level) {
+  public CreatedLogLine createLog(String message, String level) {
     Log log = new Log();
     log.setId(UUID.randomUUID().toString());
     log.setMessage(message);
     log.setLevel(level);
     log.setTimestamp(LocalDateTime.now());
-    return this.logRepository.save(log);
+    var newLog = this.logRepository.save(log);
+    var previousLogId =
+        this.logRepository.findFirstByIdLessThan(newLog.getId()).map(Log::getId).orElse(null);
+
+    return new CreatedLogLine(newLog, previousLogId);
   }
 
   public void deleteLog(String id) {

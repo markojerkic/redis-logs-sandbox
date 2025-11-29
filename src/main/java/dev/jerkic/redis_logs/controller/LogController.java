@@ -1,6 +1,8 @@
 package dev.jerkic.redis_logs.controller;
 
 import dev.jerkic.redis_logs.service.LogService;
+import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,9 +22,13 @@ public class LogController {
     return "index";
   }
 
+  @HxRequest
   @PostMapping("/logs")
-  public String createLog(@RequestParam String message, @RequestParam String level) {
-    var log = this.logService.createLog(message, level);
+  public String createLog(Model model, @RequestParam String message, @RequestParam String level) {
+    var result = this.logService.createLog(message, level);
+    var log = result.getLog();
+    var lastLogId = result.getLastLogId();
+    model.addAttribute("logs", List.of(log));
     return "index::logline";
   }
 }
