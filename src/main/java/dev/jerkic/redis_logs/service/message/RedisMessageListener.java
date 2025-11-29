@@ -31,7 +31,6 @@ public class RedisMessageListener extends TextWebSocketHandler implements Messag
   public void onMessage(Message msg, byte @Nullable [] pattern) {
     var json = new String(msg.getBody());
     var logLine = this.objectMapper.readValue(json, LogLine.class);
-
     var logLineRendered =
         this.templateRenderer.swapOobRender(
             "logs::logline", "beforeend:#log-list", Map.of("logs", List.of(logLine)));

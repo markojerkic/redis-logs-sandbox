@@ -18,7 +18,9 @@
         </div>
       </div>
       <ul class="container">
-        <li th:each="app : ${apps}" th:text="${app}"></li>
+        <li class="app-list" th:each="app : ${apps}">
+          <a th:href="@{/{appName}(appName=${app})}" th:text="${app}"></a>
+        </li>
       </ul>
     </div>
   </body>

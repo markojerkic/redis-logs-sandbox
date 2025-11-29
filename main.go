@@ -45,7 +45,7 @@ func cleanup(ctx context.Context, db *sql.DB) {
 		case <-ctx.Done():
 			return
 		case <-ticker.C:
-			db.Exec("delete from log_line where id not in (select id from log_line order by id desc limit 10);")
+			db.Exec("delete from log_line where id not in (select id from log_line order by id desc limit 100);")
 			slog.Info("Cleanup done")
 		}
 	}

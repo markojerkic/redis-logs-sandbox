@@ -16,13 +16,14 @@ public class LogController {
   private final LogService logService;
 
   @GetMapping("/")
-  public String index(@PathVariable String appName, Model model) {
+  public String index(Model model) {
     model.addAttribute("apps", this.logService.getApps());
     return "index";
   }
 
   @GetMapping("/{appName}")
   public String logsByApp(@PathVariable String appName, Model model) {
+
     model.addAttribute("logs", this.logService.getAllLogs(appName));
     return "logs";
   }
