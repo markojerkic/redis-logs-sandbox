@@ -1,11 +1,11 @@
 package dev.jerkic.redis_logs.service.message;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.jerkic.redis_logs.model.entity.LogLine;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.ObjectMapper;
 
 @Service
 @RequiredArgsConstructor

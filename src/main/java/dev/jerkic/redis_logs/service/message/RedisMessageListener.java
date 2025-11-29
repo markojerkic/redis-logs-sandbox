@@ -1,6 +1,5 @@
 package dev.jerkic.redis_logs.service.message;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.jerkic.redis_logs.model.entity.LogLine;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -9,6 +8,7 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.ObjectMapper;
 
 @Slf4j
 @Component

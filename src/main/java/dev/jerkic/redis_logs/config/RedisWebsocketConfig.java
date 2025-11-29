@@ -1,6 +1,5 @@
 package dev.jerkic.redis_logs.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.jerkic.redis_logs.service.message.RedisMessageListener;
 import dev.jerkic.redis_logs.service.message.RedisMessagePublisher;
 import org.springframework.context.annotation.Bean;
@@ -9,13 +8,17 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 @Configuration
 public class RedisWebsocketConfig {
 
   @Bean
   public ObjectMapper objectMapper() {
-    return new ObjectMapper();
+    return JsonMapper.builder()
+        .findAndAddModules()
+        .build();
   }
 
   @Bean
