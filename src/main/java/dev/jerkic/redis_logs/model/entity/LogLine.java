@@ -1,5 +1,6 @@
 package dev.jerkic.redis_logs.model.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,5 +23,7 @@ public class LogLine implements Serializable {
 
   private String message;
   private String level;
+  
+  @Column(columnDefinition = "TEXT")
   private LocalDateTime timestamp;
 }

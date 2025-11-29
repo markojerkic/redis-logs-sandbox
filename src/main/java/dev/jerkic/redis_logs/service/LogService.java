@@ -7,6 +7,8 @@ import dev.jerkic.redis_logs.service.message.RedisMessagePublisher;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,7 +18,9 @@ public class LogService {
   private final RedisMessagePublisher redisMessagePublisher;
 
   public List<LogLine> getAllLogs() {
-    return this.logRepository.findAll();
+    return this.logRepository
+        .findAll(PageRequest.of(0, 1000, Sort.by("id").descending()))
+        .getContent();
   }
 
   public CreatedLogLine createLog(String message, String level) {

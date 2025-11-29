@@ -23,37 +23,56 @@ type LogLine struct {
 }
 
 type Worker struct {
-	id  int
-	rbd *redis.Client
-	db  *sql.DB
+	id       int
+	rbd      *redis.Client
+	db       *sql.DB
+	logPool  *sync.Pool
+	jsonPool *sync.Pool
+}
+
+func cleanup(ctx context.Context, db *sql.DB) {
+	ticker := time.NewTicker(10 * time.Second)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			db.Exec("delete from log_line where id not in (select id from log_line order by id desc limit 10);")
+		}
+	}
 }
 
 func (w *Worker) Run(ctx context.Context) error {
-	logLine := &LogLine{}
-
 	for {
+		// Get LogLine from pool
+		logLine := w.logPool.Get().(*LogLine)
+
 		err := faker.FakeData(logLine)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		// Generate ISO-8601 timestamp without timezone (for Java LocalDateTime)
-		logLine.Timestamp = time.Now().Format("2006-01-02T15:04:05")
+		now := time.Now()
+		// Store timestamp in SQLite format (space separator, with milliseconds)
+		sqliteTimestamp := now.Format("2006-01-02 15:04:05.000")
 
-		// Insert and get the generated ID back
-		result, err := w.db.Exec("insert into log_line (level, message, timestamp) values (?, ?, ?)", logLine.Level, logLine.Message, logLine.Timestamp)
+		result, err := w.db.Exec("insert into log_line (level, message, timestamp) values (?, ?, ?)", logLine.Level, logLine.Message, sqliteTimestamp)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		// Get the last inserted ID
 		id, err := result.LastInsertId()
 		if err != nil {
 			log.Fatal(err)
 		}
 		logLine.ID = id
 
-		// Publish the entire LogLine as JSON
+		// Use ISO-8601 format for JSON/Redis (Jackson expects T separator)
+		logLine.Timestamp = now.Format("2006-01-02T15:04:05.000")
+
+		buf := w.jsonPool.Get().(*[]byte)
+		*buf = (*buf)[:0]
 		jsonData, err := json.Marshal(logLine)
 		if err != nil {
 			log.Fatal(err)
@@ -65,8 +84,10 @@ func (w *Worker) Run(ctx context.Context) error {
 		}
 		log.Printf("%d - published ID=%d: %s", w.id, logLine.ID, logLine.Message)
 
-		// Add a small delay to reduce contention
-		time.Sleep(100 * time.Millisecond)
+		w.logPool.Put(logLine)
+		w.jsonPool.Put(buf)
+
+		time.Sleep(time.Second)
 	}
 
 }
@@ -103,13 +124,28 @@ func main() {
 		log.Printf("[%s] %s - %s (%d)", timestamp, level, message, id)
 	}
 
+	logPool := &sync.Pool{
+		New: func() any {
+			return &LogLine{}
+		},
+	}
+
+	jsonPool := &sync.Pool{
+		New: func() any {
+			buf := make([]byte, 0, 256)
+			return &buf
+		},
+	}
+
 	wg := new(sync.WaitGroup)
-	for i := range 30 {
+	for i := range 5 {
 		wg.Go(func() {
 			w := &Worker{
-				id:  i,
-				rbd: rdb,
-				db:  db,
+				id:       i,
+				rbd:      rdb,
+				db:       db,
+				logPool:  logPool,
+				jsonPool: jsonPool,
 			}
 			err := w.Run(context.Background())
 			if err != nil {
@@ -117,6 +153,7 @@ func main() {
 			}
 		})
 	}
+	go cleanup(context.Background(), db)
 	wg.Wait()
 
 }
