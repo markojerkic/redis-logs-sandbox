@@ -18,10 +18,14 @@ h1 {
     margin: 0;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
+.log-container {
+    width: 90%;
+    margin-left: auto;
     padding: 0 1rem;
+    @media (min-width: 600px) {
+        max-width: 1200px;
+        width: 70%;
+    }
 }
 
 form {
@@ -71,15 +75,25 @@ button:hover {
 .log-body {
     display: grid;
     grid-template-rows: auto 1fr;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.log-body > .log-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
 }
 
 #log-list {
-    max-height: 500px;
     overflow-y: auto;
     border: 1px solid #ddd;
     border-radius: 5px;
     padding: 10px;
     background: white;
+    flex: 1;
+    min-height: 0;
 }
 
 #scroll-lock-indicator {
