@@ -22,7 +22,7 @@ public class LogController {
 
   @PostMapping("/logs")
   public String createLog(@RequestParam String message, @RequestParam String level) {
-    this.logService.createLog(message, level);
-    return "redirect:/";
+    var log = this.logService.createLog(message, level);
+    return "index::logline";
   }
 }

@@ -1,23 +1,69 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>Redis Logs</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
-        h1 { color: #333; }
-        form { margin: 20px 0; padding: 20px; background: #f4f4f4; border-radius: 5px; }
-        input, select, button { margin: 5px; padding: 10px; }
-        button { background: #007bff; color: white; border: none; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        .log { padding: 10px; margin: 10px 0; border-left: 4px solid #007bff; background: #f9f9f9; }
-        .log.ERROR { border-left-color: #dc3545; }
-        .log.WARN { border-left-color: #ffc107; }
-        .log.INFO { border-left-color: #007bff; }
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f4f4f4;
+            border-radius: 5px;
+        }
+
+        input,
+        select,
+        button {
+            margin: 5px;
+            padding: 10px;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .log {
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #007bff;
+            background: #f9f9f9;
+        }
+
+        .log.ERROR {
+            border-left-color: #dc3545;
+        }
+
+        .log.WARN {
+            border-left-color: #ffc107;
+        }
+
+        .log.INFO {
+            border-left-color: #007bff;
+        }
     </style>
 </head>
+
 <body>
     <h1>Redis Logs</h1>
-    
+
     <form method="post" action="/logs">
         <input type="text" name="message" placeholder="Log message" required />
         <select name="level">
@@ -27,15 +73,16 @@
         </select>
         <button type="submit">Add Log</button>
     </form>
-    
+
     <div>
         <h2>Logs</h2>
-        <div th:each="log : ${logs}" th:class="'log ' + ${log.level}">
-            <strong th:text="${log.level}">LEVEL</strong> - 
+        <div th:each="log : ${logs}" th:class="'log ' + ${log.level}" th:fragment="logline">
+            <strong th:text="${log.level}">LEVEL</strong> -
             <span th:text="${log.message}">Message</span>
-            <br/>
+            <br />
             <small th:text="${log.timestamp}">Timestamp</small>
         </div>
     </div>
 </body>
+
 </html>
