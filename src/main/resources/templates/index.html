@@ -1,42 +1,49 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<head>
+  <head>
     <title>Redis Logs</title>
-    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"
-        integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/htmx-ext-ws@2.0.4"
-        integrity="sha384-1RwI/nvUSrMRuNj7hX1+27J8XDdCoSLf0EjEyF69nacuWyiJYoQ/j39RT1mSnd2G"
-        crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"
+      integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/htmx-ext-ws@2.0.4"
+      integrity="sha384-1RwI/nvUSrMRuNj7hX1+27J8XDdCoSLf0EjEyF69nacuWyiJYoQ/j39RT1mSnd2G"
+      crossorigin="anonymous"
+    ></script>
+    <script src="/js/log-list/scroll-to-bottom.js" type="module"></script>
     <link rel="stylesheet" href="/css/index.css" />
-</head>
+  </head>
 
-<body hx-ext="ws" ws-connect="/ws/logs">
+  <body hx-ext="ws" ws-connect="/ws/logs">
     <h1>Redis Logs</h1>
 
     <form hx-post="/logs" hx-target="#log-list" hx-swap="beforebegin">
-        <input type="text" name="message" placeholder="Log message" required />
-        <select name="level">
-            <option value="INFO">INFO</option>
-            <option value="WARN">WARN</option>
-            <option value="ERROR">ERROR</option>
-        </select>
-        <button type="submit">Add Log</button>
+      <input type="text" name="message" placeholder="Log message" required />
+      <select name="level">
+        <option value="INFO">INFO</option>
+        <option value="WARN">WARN</option>
+        <option value="ERROR">ERROR</option>
+      </select>
+      <button type="submit">Add Log</button>
     </form>
 
     <div>
-        <h2>Logs</h2>
-        <div id="log-list">
-            <div th:each="log : ${logs}" th:class="'log ' + ${log.level}" th:fragment="logline"
-                th:id="'log-' + ${log.id}">
-                <strong th:text="${log.level}">LEVEL</strong> -
-                <span th:text="${log.message}">Message</span>
-                <br />
-                <small th:text="${log.timestamp}">Timestamp</small>
-            </div>
+      <h2>Logs</h2>
+      <div id="log-list">
+        <div
+          th:each="log : ${logs}"
+          th:class="'log ' + ${log.level}"
+          th:fragment="logline"
+          th:id="'log-' + ${log.id}"
+        >
+          <strong th:text="${log.level}">LEVEL</strong> -
+          <span th:text="${log.message}">Message</span>
+          <br />
+          <small th:text="${log.timestamp}">Timestamp</small>
         </div>
+      </div>
     </div>
-</body>
-
+  </body>
 </html>
