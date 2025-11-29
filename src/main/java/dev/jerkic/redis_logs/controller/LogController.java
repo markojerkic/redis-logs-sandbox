@@ -36,7 +36,7 @@ public class LogController {
     log.info("Last log ID: {}, new log id: {}", lastLogId, createdLog.getId());
 
     if (lastLogId != null) {
-      response.setHeader("HX-Reswap", "afterend scroll:bottom");
+      response.setHeader("HX-Reswap", "afterend show:window:bottom");
       response.setHeader("HX-Retarget", "#log-" + lastLogId);
     }
 
