@@ -34,7 +34,7 @@ public class RedisMessageListener extends TextWebSocketHandler implements Messag
 
     var logLineRendered =
         this.templateRenderer.swapOobRender(
-            "index::logline", "beforeend:#log-list", Map.of("logs", List.of(logLine)));
+            "logs::logline", "beforeend:#log-list", Map.of("logs", List.of(logLine)));
     this.sessions.forEach(
         (session, isOpen) -> {
           this.sendMessage(session, logLineRendered);

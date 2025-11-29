@@ -1,8 +1,13 @@
 package dev.jerkic.redis_logs.repository;
 
 import dev.jerkic.redis_logs.model.entity.LogLine;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface LogRepository extends JpaRepository<LogLine, Long> {}
+public interface LogRepository extends JpaRepository<LogLine, Long> {
+
+  Page<LogLine> findAllByApp_appName(String appName, Pageable pageable);
+}

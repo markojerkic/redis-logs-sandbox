@@ -6,9 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Slf4j
 @Controller
@@ -18,17 +16,14 @@ public class LogController {
   private final LogService logService;
 
   @GetMapping("/")
-  public String index(Model model) {
-    model.addAttribute("logs", this.logService.getAllLogs());
+  public String index(@PathVariable String appName, Model model) {
+    model.addAttribute("apps", this.logService.getApps());
     return "index";
   }
 
-  @PostMapping("/logs")
-  @ResponseBody
-  public void createLog(@RequestParam String message, @RequestParam String level) {
-    var result = this.logService.createLog(message, level);
-    var createdLog = result.getLog();
-    var lastLogId = result.getLastLogId();
-    log.info("Last log ID: {}, new log id: {}", lastLogId, createdLog.getId());
+  @GetMapping("/{appName}")
+  public String logsByApp(@PathVariable String appName, Model model) {
+    model.addAttribute("logs", this.logService.getAllLogs(appName));
+    return "logs";
   }
 }

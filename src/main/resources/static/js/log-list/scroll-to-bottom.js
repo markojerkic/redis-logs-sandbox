@@ -13,45 +13,45 @@ let isScrollLocked = true;
  * @returns {boolean} True if at bottom, false otherwise
  */
 function isAtBottom() {
-    const scrollTop = logList.scrollTop;
-    const scrollHeight = logList.scrollHeight;
-    const clientHeight = logList.clientHeight;
-    return scrollHeight - scrollTop - clientHeight <= SCROLL_THRESHOLD;
+  const scrollTop = logList.scrollTop;
+  const scrollHeight = logList.scrollHeight;
+  const clientHeight = logList.clientHeight;
+  return scrollHeight - scrollTop - clientHeight <= SCROLL_THRESHOLD;
 }
 
 function scrollToBottom() {
-    logList.scrollTop = logList.scrollHeight;
+  logList.scrollTop = logList.scrollHeight;
 }
 
 function debounce(func, wait) {
-    let timeout;
-    return function (...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            func.apply(this, args);
-        }, wait);
-    };
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      func.apply(this, args);
+    }, wait);
+  };
 }
 
 function updateScrollLockIndicator() {
-    if (!scrollLockIndicator) return;
+  if (!scrollLockIndicator) return;
 
-    if (isScrollLocked) {
-        scrollLockIndicator.textContent = "Auto-scroll: ON";
-        scrollLockIndicator.className = "scroll-lock-active";
-    } else {
-        scrollLockIndicator.textContent = "Auto-scroll: OFF";
-        scrollLockIndicator.className = "scroll-lock-inactive";
-    }
+  if (isScrollLocked) {
+    scrollLockIndicator.textContent = "Auto-scroll: ON";
+    scrollLockIndicator.className = "scroll-lock-active";
+  } else {
+    scrollLockIndicator.textContent = "Auto-scroll: OFF";
+    scrollLockIndicator.className = "scroll-lock-inactive";
+  }
 }
 
 function handleScroll() {
-    if (isAtBottom()) {
-        isScrollLocked = true;
-    } else {
-        isScrollLocked = false;
-    }
-    debounce(updateScrollLockIndicator, 100)();
+  if (isAtBottom()) {
+    isScrollLocked = true;
+  } else {
+    isScrollLocked = false;
+  }
+  debounce(updateScrollLockIndicator, 100)();
 }
 
 /**
@@ -60,26 +60,26 @@ function handleScroll() {
  * @returns {void}
  */
 function handleOobSwap(event) {
-    const elementId = event?.detail?.target?.id;
-    if (elementId !== "log-list") return;
+  const elementId = event?.detail?.target?.id;
+  if (elementId !== "log-list") return;
 
-    if (isScrollLocked) {
-        scrollToBottom();
-    }
+  if (isScrollLocked) {
+    scrollToBottom();
+  }
 }
 
 function setup() {
-    logList = document.getElementById("log-list");
-    if (!logList) throw new Error("Log list not found");
+  logList = document.getElementById("log-list");
+  if (!logList) throw new Error("Log list not found");
 
-    scrollLockIndicator = document.getElementById("scroll-lock-indicator");
-    if (!scrollLockIndicator) console.warn("Scroll lock indicator not found");
+  scrollLockIndicator = document.getElementById("scroll-lock-indicator");
+  if (!scrollLockIndicator) console.warn("Scroll lock indicator not found");
 
-    logList.addEventListener("scroll", handleScroll);
-    document.body.addEventListener("htmx:oobAfterSwap", handleOobSwap);
+  logList.addEventListener("scroll", handleScroll);
+  document.body.addEventListener("htmx:oobAfterSwap", handleOobSwap);
 
-    scrollToBottom();
-    updateScrollLockIndicator();
+  scrollToBottom();
+  updateScrollLockIndicator();
 }
 
 document.addEventListener("DOMContentLoaded", setup);
