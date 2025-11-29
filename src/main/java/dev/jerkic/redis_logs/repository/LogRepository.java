@@ -1,10 +1,8 @@
 package dev.jerkic.redis_logs.repository;
 
-import dev.jerkic.redis_logs.model.entity.Log;
-import java.util.Optional;
-import org.springframework.data.repository.CrudRepository;
+import dev.jerkic.redis_logs.model.entity.LogLine;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface LogRepository extends CrudRepository<Log, String> {
-}
+public interface LogRepository extends JpaRepository<LogLine, Long> {}
