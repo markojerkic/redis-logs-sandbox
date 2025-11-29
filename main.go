@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"log"
+	"log/slog"
 	"os"
 	"sync"
 	"time"
@@ -39,11 +40,13 @@ func cleanup(ctx context.Context, db *sql.DB) {
 			return
 		case <-ticker.C:
 			db.Exec("delete from log_line where id not in (select id from log_line order by id desc limit 10);")
+			slog.Info("Cleanup done")
 		}
 	}
 }
 
 func (w *Worker) Run(ctx context.Context) error {
+	i := 0
 	for {
 		// Get LogLine from pool
 		logLine := w.logPool.Get().(*LogLine)
@@ -54,7 +57,6 @@ func (w *Worker) Run(ctx context.Context) error {
 		}
 
 		now := time.Now()
-		// Store timestamp in SQLite format (space separator, with milliseconds)
 		sqliteTimestamp := now.Format("2006-01-02 15:04:05.000")
 
 		result, err := w.db.Exec("insert into log_line (level, message, timestamp) values (?, ?, ?)", logLine.Level, logLine.Message, sqliteTimestamp)
@@ -67,8 +69,6 @@ func (w *Worker) Run(ctx context.Context) error {
 			log.Fatal(err)
 		}
 		logLine.ID = id
-
-		// Use ISO-8601 format for JSON/Redis (Jackson expects T separator)
 		logLine.Timestamp = now.Format("2006-01-02T15:04:05.000")
 
 		buf := w.jsonPool.Get().(*[]byte)
@@ -82,7 +82,10 @@ func (w *Worker) Run(ctx context.Context) error {
 		if res.Err() != nil {
 			log.Fatal(res.Err())
 		}
-		log.Printf("%d - published ID=%d: %s", w.id, logLine.ID, logLine.Message)
+		i = (i + 1) % 100
+		if i == 0 {
+			log.Printf("%d - published ID=%d: %s", w.id, logLine.ID, logLine.Message)
+		}
 
 		w.logPool.Put(logLine)
 		w.jsonPool.Put(buf)
@@ -100,9 +103,12 @@ func main() {
 	}
 	redisURL := os.Getenv("REDIS_URL")
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     redisURL,
-		DB:       0,
-		Password: "",
+		Addr:            redisURL,
+		DB:              0,
+		Password:        "",
+		MaxRetries:      15,
+		MinRetryBackoff: 100 * time.Millisecond,
+		MaxRetryBackoff: 1 * time.Second,
 	})
 	rdb.Ping(context.Background())
 
