@@ -26,7 +26,7 @@ public class LogService {
     log.setTimestamp(LocalDateTime.now());
     var newLog = this.logRepository.save(log);
     var previousLogId =
-        this.logRepository.findFirstByIdLessThan(newLog.getId()).map(Log::getId).orElse(null);
+        this.logRepository.findFirstByIdIsLessThan(newLog.getId()).map(Log::getId).orElse(null);
 
     return new CreatedLogLine(newLog, previousLogId);
   }

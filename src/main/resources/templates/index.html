@@ -12,7 +12,7 @@
 <body>
     <h1>Redis Logs</h1>
 
-    <form method="post" action="/logs">
+    <form hx-post="/logs" hx-target="#log-template" hx-swap="beforeend">
         <input type="text" name="message" placeholder="Log message" required />
         <select name="level">
             <option value="INFO">INFO</option>
@@ -24,11 +24,14 @@
 
     <div>
         <h2>Logs</h2>
-        <div th:each="log : ${logs}" th:class="'log ' + ${log.level}" th:fragment="logline" th:id="'log-' + ${log.id}">
-            <strong th:text="${log.level}">LEVEL</strong> -
-            <span th:text="${log.message}">Message</span>
-            <br />
-            <small th:text="${log.timestamp}">Timestamp</small>
+        <div id="log-list">
+            <div th:each="log : ${logs}" th:class="'log ' + ${log.level}" th:fragment="logline"
+                th:id="'log-' + ${log.id}">
+                <strong th:text="${log.level}">LEVEL</strong> -
+                <span th:text="${log.message}">Message</span>
+                <br />
+                <small th:text="${log.timestamp}">Timestamp</small>
+            </div>
         </div>
     </div>
 </body>
