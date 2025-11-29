@@ -17,36 +17,28 @@
   </head>
 
   <body hx-ext="ws" ws-connect="/ws/logs">
-    <h1>Redis Logs</h1>
-
-    <form hx-post="/logs" hx-target="#log-list" hx-swap="beforebegin">
-      <input type="text" name="message" placeholder="Log message" required />
-      <select name="level">
-        <option value="INFO">INFO</option>
-        <option value="WARN">WARN</option>
-        <option value="ERROR">ERROR</option>
-      </select>
-      <button type="submit">Add Log</button>
-    </form>
-
-    <div>
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h2>Logs</h2>
-        <div id="scroll-lock-indicator" class="scroll-lock-active">
-          Auto-scroll: ON
+    <div id="scroll-lock-indicator" class="scroll-lock-active">
+      Auto-scroll: ON
+    </div>
+    <div class="log-body">
+      <div class="header">
+        <div class="container">
+          <h1>Redis Pub/Sub Logs</h1>
         </div>
       </div>
-      <div id="log-list">
-        <div
-          th:each="log : ${logs}"
-          th:class="'log ' + ${log.level}"
-          th:fragment="logline"
-          th:id="'log-' + ${log.id}"
-        >
-          <strong th:text="${log.level}">LEVEL</strong> -
-          <span th:text="${log.message}">Message</span>
-          <br />
-          <small th:text="${log.timestamp}">Timestamp</small>
+      <div class="container">
+        <div id="log-list">
+          <div
+            th:each="log : ${logs}"
+            th:class="'log ' + ${log.level}"
+            th:fragment="logline"
+            th:id="'log-' + ${log.id}"
+          >
+            <strong th:text="${log.level}">LEVEL</strong> -
+            <span th:text="${log.message}">Message</span>
+            <br />
+            <small th:text="${log.timestamp}">Timestamp</small>
+          </div>
         </div>
       </div>
     </div>
