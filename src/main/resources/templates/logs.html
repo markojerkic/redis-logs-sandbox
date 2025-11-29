@@ -1,0 +1,53 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Redis Logs</title>
+    <script
+      src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"
+      integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/htmx-ext-ws@2.0.4"
+      integrity="sha384-1RwI/nvUSrMRuNj7hX1+27J8XDdCoSLf0EjEyF69nacuWyiJYoQ/j39RT1mSnd2G"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="/css/index.css" />
+  </head>
+
+  <body hx-boost="true">
+    <div id="scroll-lock-indicator" class="scroll-lock-active">
+      Auto-scroll: ON
+    </div>
+    <div
+      class="log-body"
+      hx-ext="ws"
+      th:ws-connect="@{/ws/logs/{appName}(appName=${appName})}"
+    >
+      <a class="header" href="/">
+        <div class="container">
+          <h1>Redis Pub/Sub Logs</h1>
+        </div>
+      </a>
+      <div class="log-container">
+        <div id="log-list">
+          <div
+            th:each="log : ${logs}"
+            th:class="'log ' + ${log.level}"
+            th:fragment="logline"
+            th:id="'log-' + ${log.id}"
+            th:data-log-id="${log.id}"
+            th:data-app-name="${log.app?.appName}"
+            th:data-instance-id="${log.app?.instanceId}"
+          >
+            <strong th:text="${log.level}">LEVEL</strong> -
+            <span th:text="${log.message}">Message</span>
+            <br />
+            <small th:text="${log.timestamp}">Timestamp</small>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="/js/log-list/scroll-to-bottom.js" type="module"></script>
+  </body>
+</html>

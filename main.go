@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"log"
 	"log/slog"
+	"math/rand"
 	"os"
 	"sync"
 	"time"
@@ -145,7 +146,7 @@ func main() {
 	}
 
 	wg := new(sync.WaitGroup)
-	for i := range 5 {
+	for i := range 15 {
 		wg.Go(func() {
 			w := &Worker{
 				id:       i,
@@ -154,6 +155,8 @@ func main() {
 				logPool:  logPool,
 				jsonPool: jsonPool,
 			}
+			randomWaitTime := time.Duration(rand.Intn(1000)) * time.Millisecond
+			time.Sleep(randomWaitTime)
 			err := w.Run(context.Background())
 			if err != nil {
 				log.Fatal(err)

@@ -35,5 +35,4 @@ build/
 ### DBs ###
 *.db
 *.db-*
-main
 *.log

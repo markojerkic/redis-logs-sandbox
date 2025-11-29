@@ -1,17 +1,9 @@
 const SCROLL_THRESHOLD = 10;
 
-/** @type {HTMLElement | null} The log list container element */
 let logList = null;
-
-/** @type {HTMLElement | null} The scroll lock indicator element */
 let scrollLockIndicator = null;
-
-/** @type {boolean} Whether auto-scroll is enabled */
 let isScrollLocked = true;
 
-/**
- * @returns {boolean} True if at bottom, false otherwise
- */
 function isAtBottom() {
   const scrollTop = logList.scrollTop;
   const scrollHeight = logList.scrollHeight;
@@ -54,11 +46,6 @@ function handleScroll() {
   debounce(updateScrollLockIndicator, 100)();
 }
 
-/**
- * Handles HTMX out-of-band swap events for new log entries
- * @param {CustomEvent} event - The HTMX OOB swap event
- * @returns {void}
- */
 function handleOobSwap(event) {
   const elementId = event?.detail?.target?.id;
   if (elementId !== "log-list") return;
@@ -70,10 +57,9 @@ function handleOobSwap(event) {
 
 function setup() {
   logList = document.getElementById("log-list");
-  if (!logList) throw new Error("Log list not found");
+  if (!logList) return;
 
   scrollLockIndicator = document.getElementById("scroll-lock-indicator");
-  if (!scrollLockIndicator) console.warn("Scroll lock indicator not found");
   scrollToBottom();
 
   logList.addEventListener("scroll", handleScroll);
@@ -82,9 +68,20 @@ function setup() {
   updateScrollLockIndicator();
 }
 
-document.addEventListener("DOMContentLoaded", setup);
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    if (document.getElementById("log-list")) {
+      setup();
+    }
+  });
+} else {
+  if (document.getElementById("log-list")) {
+    setup();
+  }
+}
+
 document.addEventListener("htmx:afterSwap", (e) => {
-  if (e.detail?.isBoosted === true) {
+  if (document.getElementById("log-list")) {
     setup();
   }
 });
