@@ -53,7 +53,9 @@ public class RedisMessageListener extends TextWebSocketHandler implements Messag
   }
 
   @SneakyThrows
-  private void sendMessage(WebSocketSession session, String message) {
-    session.sendMessage(new TextMessage(message));
+  private synchronized void sendMessage(WebSocketSession session, String message) {
+    if (session.isOpen()) {
+      session.sendMessage(new TextMessage(message));
+    }
   }
 }
