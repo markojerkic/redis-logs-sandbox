@@ -7,14 +7,12 @@ import dev.jerkic.redis_logs.service.message.RedisMessagePublisher;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class LogService {
   private final LogRepository logRepository;
-  private final RedisTemplate<String, String> redisTemplate;
   private final RedisMessagePublisher redisMessagePublisher;
 
   public List<LogLine> getAllLogs() {

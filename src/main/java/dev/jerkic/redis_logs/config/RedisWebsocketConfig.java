@@ -1,6 +1,6 @@
 package dev.jerkic.redis_logs.config;
 
-import dev.jerkic.redis_logs.model.entity.LogLine;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.jerkic.redis_logs.service.message.RedisMessageListener;
 import dev.jerkic.redis_logs.service.message.RedisMessagePublisher;
 import org.springframework.context.annotation.Bean;
@@ -14,8 +14,13 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 public class RedisWebsocketConfig {
 
   @Bean
-  public RedisTemplate<String, LogLine> redisTemplate(RedisConnectionFactory connectionFactory) {
-    var template = new RedisTemplate<String, LogLine>();
+  public ObjectMapper objectMapper() {
+    return new ObjectMapper();
+  }
+
+  @Bean
+  public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory connectionFactory) {
+    var template = new RedisTemplate<String, String>();
     template.setConnectionFactory(connectionFactory);
     return template;
   }

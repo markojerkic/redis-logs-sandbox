@@ -1,16 +1,21 @@
 package dev.jerkic.redis_logs.service.message;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.jerkic.redis_logs.model.entity.LogLine;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
+import lombok.SneakyThrows;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class RedisMessagePublisher {
-  private final RedisTemplate<String, LogLine> redisTemplate;
+  private final StringRedisTemplate redisTemplate;
+  private final ObjectMapper objectMapper;
 
+  @SneakyThrows
   public void publishLog(LogLine logLine) {
-    this.redisTemplate.convertAndSend("logs", logLine);
+    var json = objectMapper.writeValueAsString(logLine);
+    this.redisTemplate.convertAndSend("logs", json);
   }
 }
