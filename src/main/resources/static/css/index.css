@@ -18,9 +18,35 @@ h1 {
   margin: 0;
 }
 
+ul.container {
+  list-style: none;
+  padding: 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
 li.app-list {
-  margin-right: auto;
-  margin-left: auto;
+  margin-bottom: 0.75rem;
+}
+
+li.app-list a {
+  display: block;
+  padding: 1rem 1.5rem;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  color: #764ba2;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  border-left: 3px solid #764ba2;
+}
+
+li.app-list a:hover {
+  box-shadow: 0 2px 8px rgba(118, 75, 162, 0.2);
+  padding-left: 1.75rem;
+  background: #f8f5fb;
 }
 
 .log-container {
