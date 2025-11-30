@@ -42,12 +42,12 @@ public class RedisMessageListener extends TextWebSocketHandler implements Messag
     var logLineRendered =
         this.templateRenderer.swapOobRender(
             "logs::logline", "beforeend:#log-list", Map.of("logs", List.of(logLine)));
-    this.appNamesToSessions
-        .getOrDefault(logLine.getApp().getAppName(), Collections.emptySet())
-        .forEach(
-            (session) -> {
-              this.sendMessage(session, logLineRendered);
-            });
+
+    for (var session :
+        this.appNamesToSessions.getOrDefault(
+            logLine.getApp().getAppName(), Collections.emptySet())) {
+      this.sendMessage(session, logLineRendered);
+    }
   }
 
   @Override
@@ -77,7 +77,7 @@ public class RedisMessageListener extends TextWebSocketHandler implements Messag
   }
 
   @SneakyThrows
-  private synchronized void sendMessage(WebSocketSession session, String message) {
+  private void sendMessage(WebSocketSession session, String message) {
     if (session.isOpen()) {
       session.sendMessage(new TextMessage(message));
     }
