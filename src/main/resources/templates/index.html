@@ -1,6 +1,6 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head>
+  <head th:fragment="head">
     <title>Redis Logs</title>
     <script
       src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"
@@ -13,6 +13,15 @@
       crossorigin="anonymous"
     ></script>
     <link rel="stylesheet" href="/css/index.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/toastify-js"
+    ></script>
   </head>
 
   <body hx-boost="true">

@@ -3,5 +3,18 @@
  * @param {Event} e - The click event
  */
 function handleCopyButtonClick(e) {
-  console.log("Copy button clicked", e.target.closest("pre"));
+  const currentUrl = new URL(window.location.href);
+  currentUrl.searchParams = new URLSearchParams();
+  currentUrl.searchParams.set("logId", e.target.closest("pre").dataset.logId);
+  console.log("Copy button clicked", currentUrl, e.target.closest("pre"));
+  navigator.clipboard.writeText(currentUrl.toString());
+
+  Toastify({
+    text: "Copied link to clipboard",
+    duration: 3_000,
+    newWindow: true,
+    close: true,
+    gravity: "bottom",
+    position: "right",
+  }).showToast();
 }
