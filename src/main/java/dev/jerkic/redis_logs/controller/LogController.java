@@ -29,24 +29,13 @@ public class LogController {
       LogLineFilter logLineFilter,
       Model model,
       HttpServletRequest request) {
-    var logs = this.logService.getAllLogs(appName, logLineFilter);
-    model.addAttribute("logs", logs.getContent().reversed());
-    if (logs.hasNext()) {
-      var next = logs.getContent().get(logs.getContent().size() - 1).getId();
-      model.addAttribute("beforeId", next);
-    }
-    if (logs.hasPrevious()) {
-      var prev = logs.getContent().get(0).getId();
-      model.addAttribute("afterId", prev);
-    } else {
-      model.addAttribute("addWS", true);
-    }
-    model.addAttribute("appName", appName);
-    if (logLineFilter.logId() != null) {
-      model.addAttribute("filterId", logLineFilter.logId());
-    }
+    var viewData = this.logService.getLogsViewData(appName, logLineFilter);
+    model.addAllAttributes(viewData.toModelAttributes());
 
-    if (request.getHeader("HX-Request") == "true" && request.getHeader("HX-Boosted") != "true") {
+    boolean isHtmxRequest = "true".equals(request.getHeader("HX-Request"));
+    boolean isBoosted = "true".equals(request.getHeader("HX-Boosted"));
+
+    if (isHtmxRequest && !isBoosted) {
       return "logs::loglist";
     }
 
