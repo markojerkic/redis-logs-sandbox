@@ -30,6 +30,7 @@
           <pre
             th:each="log : ${logs}"
             th:class="'log ' + ${log.level}"
+            th:classappend="${log.id == filterId} ? 'filtered-log' : ''"
             th:fragment="logline"
             th:id="'log-' + ${log.id}"
             th:data-log-id="${log.id}"

@@ -1,8 +1,8 @@
 package dev.jerkic.redis_logs.controller;
 
+import dev.jerkic.redis_logs.model.dto.LogLineFilter;
 import dev.jerkic.redis_logs.service.LogService;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -26,11 +26,10 @@ public class LogController {
   @GetMapping("/{appName}")
   public String logsByApp(
       @PathVariable String appName,
-      Optional<Long> before,
-      Optional<Long> after,
+      LogLineFilter logLineFilter,
       Model model,
       HttpServletRequest request) {
-    var logs = this.logService.getAllLogs(appName, before, after);
+    var logs = this.logService.getAllLogs(appName, logLineFilter);
     model.addAttribute("logs", logs.getContent().reversed());
     if (logs.hasNext()) {
       var next = logs.getContent().get(logs.getContent().size() - 1).getId();
@@ -43,6 +42,9 @@ public class LogController {
       model.addAttribute("addWS", true);
     }
     model.addAttribute("appName", appName);
+    if (logLineFilter.logId() != null) {
+      model.addAttribute("filterId", logLineFilter.logId());
+    }
 
     if (request.getHeader("HX-Request") == "true" && request.getHeader("HX-Boosted") != "true") {
       return "logs::loglist";

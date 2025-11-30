@@ -102,6 +102,10 @@ button:hover {
   word-wrap: break-word;
 }
 
+pre.filtered-log {
+  background: #f2d5cf;
+}
+
 .log:hover {
   background: #fafafa;
 }
