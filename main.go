@@ -39,14 +39,14 @@ type Worker struct {
 }
 
 func cleanup(ctx context.Context, db *sql.DB) {
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(3 * time.Minute)
 	defer ticker.Stop()
 	for {
 		select {
 		case <-ctx.Done():
 			return
 		case <-ticker.C:
-			db.Exec("delete from log_line where id not in (select id from log_line order by id desc limit 100);")
+			db.Exec("delete from log_line where id not in (select id from log_line order by id desc limit 10000);")
 			slog.Info("Cleanup done")
 		}
 	}

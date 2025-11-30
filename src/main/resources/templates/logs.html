@@ -19,11 +19,8 @@
     <div id="scroll-lock-indicator" class="scroll-lock-active">
       Auto-scroll: ON
     </div>
-    <div
-      class="log-body"
-      hx-ext="ws"
-      th:ws-connect="@{/ws/logs/{appName}(appName=${appName})}"
-    >
+    <div class="log-body">
+      <script src="/js/log-list/log-actions.js"></script>
       <a class="header" href="/">
         <div class="container">
           <h1>Redis Pub/Sub Logs</h1>
@@ -31,23 +28,42 @@
       </a>
       <div class="log-container">
         <div id="log-list">
-          <div
-            th:each="log : ${logs}"
+          <pre
+            th:each="log : ${logs.content}"
             th:class="'log ' + ${log.level}"
             th:fragment="logline"
             th:id="'log-' + ${log.id}"
             th:data-log-id="${log.id}"
             th:data-app-name="${log.app?.appName}"
             th:data-instance-id="${log.app?.instanceId}"
-          >
-            <strong th:text="${log.level}">LEVEL</strong> -
-            <span th:text="${log.message}">Message</span>
-            <br />
-            <small th:text="${log.timestamp}">Timestamp</small>
-          </div>
+          ><span class="log-content" th:text="${log.message}">Message</span><button
+              class="log-copy-btn"
+              title="Copy link to line"
+              onclick="handleCopyButtonClick(event)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                width="16"
+                height="16"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184"
+                />
+              </svg>
+            </button></pre>
         </div>
       </div>
     </div>
     <script src="/js/log-list/scroll-to-bottom.js" type="module"></script>
+    <div
+      hx-ext="ws"
+      th:ws-connect="@{/ws/logs/{appName}(appName=${appName})}"
+    ></div>
   </body>
 </html>

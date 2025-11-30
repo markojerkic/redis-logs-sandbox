@@ -2,8 +2,12 @@ package dev.jerkic.redis_logs.service;
 
 import dev.jerkic.redis_logs.model.entity.LogLine;
 import dev.jerkic.redis_logs.repository.LogRepository;
+import jakarta.persistence.criteria.Predicate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -17,9 +21,23 @@ public class LogService {
     return this.logRepository.findAllApps();
   }
 
-  public List<LogLine> getAllLogs(String appName) {
-    return this.logRepository
-        .findAllByApp_appName(appName, PageRequest.of(0, 1000, Sort.by("id").descending()))
-        .getContent();
+  public Page<LogLine> getAllLogs(String appName, Optional<Long> before, Optional<Long> after) {
+    var result =
+        this.logRepository.findAll(
+            (root, criteriaQuery, criteriaBuilder) -> {
+              var predicates = new ArrayList<Predicate>();
+
+              if (before.isPresent()) {
+                predicates.add(criteriaBuilder.lessThan(root.get("id"), before.get()));
+              }
+              if (after.isPresent()) {
+                predicates.add(criteriaBuilder.greaterThan(root.get("id"), after.get()));
+              }
+
+              return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+            },
+            PageRequest.of(0, 100, Sort.by(Sort.Direction.DESC, "id")));
+
+    return result;
   }
 }

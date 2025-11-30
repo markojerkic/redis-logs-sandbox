@@ -86,10 +86,53 @@ button:hover {
 }
 
 .log {
-  padding: 10px;
-  margin: 10px 0;
-  border-left: 4px solid #007bff;
-  background: #f9f9f9;
+  padding: 0 8px;
+  margin: 0;
+  border-left: 3px solid #007bff;
+  background: white;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.2;
+  font-family: "Consolas", "Monaco", "Courier New", monospace;
+  transition: background 0.15s ease;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.log:hover {
+  background: #fafafa;
+}
+
+.log-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.log-copy-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: #999;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.log:hover .log-copy-btn {
+  opacity: 1;
+}
+
+.log-copy-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: #333;
 }
 
 .log.ERROR {
@@ -154,4 +197,30 @@ button:hover {
   padding: 1.5rem 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   margin-bottom: 2rem;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #28a745;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  z-index: 10000;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast.toast-error {
+  background: #dc3545;
 }

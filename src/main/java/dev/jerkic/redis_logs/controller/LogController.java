@@ -1,6 +1,7 @@
 package dev.jerkic.redis_logs.controller;
 
 import dev.jerkic.redis_logs.service.LogService;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -22,8 +23,10 @@ public class LogController {
   }
 
   @GetMapping("/{appName}")
-  public String logsByApp(@PathVariable String appName, Model model) {
-    model.addAttribute("logs", this.logService.getAllLogs(appName));
+  public String logsByApp(
+      @PathVariable String appName, Optional<Long> before, Optional<Long> after, Model model) {
+    var logs = this.logService.getAllLogs(appName, before, after);
+    model.addAttribute("logs", logs);
     model.addAttribute("appName", appName);
     return "logs";
   }
