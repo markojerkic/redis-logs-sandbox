@@ -21,6 +21,11 @@
     </div>
     <div class="log-body">
       <script src="/js/log-list/log-actions.js"></script>
+      <div
+        th:if="${addWS}"
+        hx-ext="ws"
+        th:ws-connect="@{/ws/logs/{appName}(appName=${appName})}"
+      ></div>
       <a class="header" href="/">
         <div class="container">
           <h1>Redis Pub/Sub Logs</h1>
@@ -31,8 +36,8 @@
           <span
             th:if="${beforeId != null}"
             th:hx-get="@{/{appName}(appName=${appName}, before=${beforeId})}"
-            hx-trigger="intersect once threshold:0.5"
-            hx-swap="outerHTML show:bottom"
+            hx-trigger="intersect once threshold:0.5 from:window"
+            th:hx-swap="|outerHTML show:#log-${beforeId}:top|"
             hx-select="#log-list>*"
           ></span>
           <pre
@@ -66,15 +71,19 @@
             </button></pre>
           <span
             th:if="${afterId != null}"
-            th:text="'After id: ' + ${afterId}"
+            th:hx-get="@{/{appName}(appName=${appName}, after=${afterId})}"
+            hx-trigger="intersect once threshold:0.5 from:window"
+            th:hx-swap="|outerHTML show:#log-${afterId}:bottom|"
+            hx-select="#log-list>*"
           ></span>
+          <div
+            th:if="${addWS}"
+            hx-ext="ws"
+            th:ws-connect="@{/ws/logs/{appName}(appName=${appName})}"
+          ></div>
         </div>
       </div>
     </div>
     <script src="/js/log-list/scroll-to-bottom.js" type="module"></script>
-    <div
-      hx-ext="ws"
-      th:ws-connect="@{/ws/logs/{appName}(appName=${appName})}"
-    ></div>
   </body>
 </html>

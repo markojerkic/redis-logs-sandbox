@@ -33,14 +33,18 @@ public class LogController {
     var logs = this.logService.getAllLogs(appName, before, after);
     model.addAttribute("logs", logs.getContent().reversed());
     if (logs.hasNext()) {
-      model.addAttribute("beforeId", logs.getContent().get(0).getId());
+      var next = logs.getContent().get(logs.getContent().size() - 1).getId();
+      model.addAttribute("beforeId", next);
     }
     if (logs.hasPrevious()) {
-      model.addAttribute("afterId", logs.getContent().get(logs.getContent().size() - 1).getId());
+      var prev = logs.getContent().get(0).getId();
+      model.addAttribute("afterId", prev);
+    } else {
+      model.addAttribute("addWS", true);
     }
     model.addAttribute("appName", appName);
 
-    if (request.getHeader("HX-Request") != null) {
+    if (request.getHeader("HX-Request") == "true" && request.getHeader("HX-Boosted") != "true") {
       return "logs::loglist";
     }
 
