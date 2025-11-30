@@ -28,7 +28,7 @@ public class LogService {
     var hasAfter =
         logLineFilter.logId() == null
             ? logs.hasNext()
-            : this.logRepository.exists(
+            : !this.logRepository.exists(
                 new LogLineSpecification(appName, logLineFilter.idFilterToAfterFilter()));
 
     var reversedLogs = logs.getContent().reversed();
@@ -36,6 +36,9 @@ public class LogService {
     var beforeId =
         logs.hasNext() ? logs.getContent().get(logs.getContent().size() - 1).getId() : null;
     var afterId = logs.hasPrevious() ? logs.getContent().get(0).getId() : null;
+    if (logLineFilter.logId() != null) {
+      afterId = logLineFilter.logId();
+    }
     var addWS = hasAfter;
 
     var filterId = logLineFilter.logId();

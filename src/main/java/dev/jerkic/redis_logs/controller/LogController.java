@@ -30,10 +30,16 @@ public class LogController {
       Model model,
       HttpServletRequest request) {
     var viewData = this.logService.getLogsViewData(appName, logLineFilter);
+    log.info(
+        "View data: after={}, before={}, addWs={}",
+        viewData.afterId(),
+        viewData.beforeId(),
+        viewData.addWS());
+
     model.addAllAttributes(viewData.toModelAttributes());
 
-    boolean isHtmxRequest = "true".equals(request.getHeader("HX-Request"));
-    boolean isBoosted = "true".equals(request.getHeader("HX-Boosted"));
+    var isHtmxRequest = Boolean.parseBoolean(request.getHeader("HX-Request"));
+    var isBoosted = Boolean.parseBoolean(request.getHeader("HX-Boosted"));
 
     if (isHtmxRequest && !isBoosted) {
       return "logs::loglist";
