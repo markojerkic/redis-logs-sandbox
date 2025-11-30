@@ -25,7 +25,9 @@ public class LogService {
     var result =
         this.logRepository.findAll(
             (root, criteriaQuery, criteriaBuilder) -> {
-              var predicates = new ArrayList<Predicate>();
+              var predicates = new ArrayList<Predicate>(3);
+
+              predicates.add(criteriaBuilder.equal(root.get("app").get("appName"), appName));
 
               if (before.isPresent()) {
                 predicates.add(criteriaBuilder.lessThan(root.get("id"), before.get()));

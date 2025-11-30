@@ -27,9 +27,18 @@
         </div>
       </a>
       <div class="log-container">
-        <div id="log-list">
+        <div id="log-list" th:fragment="loglist">
+          <span
+            th:if="${beforeId != null}"
+            th:hx-get="@{/{appName}(appName=${appName}, before=${beforeId})}"
+            hx-trigger="intersect once"
+            th:hx-swap="afterbegin"
+            hx-target="#log-list"
+            hx-select=".log-list>*"
+            th:text="'Before id: ' + ${beforeId}"
+          ></span>
           <pre
-            th:each="log : ${logs.content}"
+            th:each="log : ${logs}"
             th:class="'log ' + ${log.level}"
             th:fragment="logline"
             th:id="'log-' + ${log.id}"
@@ -57,6 +66,10 @@
                 />
               </svg>
             </button></pre>
+          <span
+            th:if="${afterId != null}"
+            th:text="'After id: ' + ${afterId}"
+          ></span>
         </div>
       </div>
     </div>
