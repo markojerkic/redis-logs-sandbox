@@ -31,7 +31,7 @@ public class LogController {
       Model model,
       HttpServletRequest request) {
     var logs = this.logService.getAllLogs(appName, before, after);
-    model.addAttribute("logs", logs);
+    model.addAttribute("logs", logs.getContent().reversed());
     if (logs.hasNext()) {
       model.addAttribute("beforeId", logs.getContent().get(0).getId());
     }

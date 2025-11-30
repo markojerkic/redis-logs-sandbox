@@ -32,9 +32,8 @@
             th:if="${beforeId != null}"
             th:hx-get="@{/{appName}(appName=${appName}, before=${beforeId})}"
             hx-trigger="intersect once"
-            th:hx-swap="afterbegin"
-            hx-target="#log-list"
-            hx-select=".log-list>*"
+            th:hx-swap="outerHTML"
+            hx-select="#log-list>*"
             th:text="'Before id: ' + ${beforeId}"
           ></span>
           <pre
@@ -45,7 +44,7 @@
             th:data-log-id="${log.id}"
             th:data-app-name="${log.app?.appName}"
             th:data-instance-id="${log.app?.instanceId}"
-          ><span class="log-content" th:text="${log.message}">Message</span><button
+          ><span class="log-content" th:text="${log.id}">Message</span><button
               class="log-copy-btn"
               title="Copy link to line"
               onclick="handleCopyButtonClick(event)"

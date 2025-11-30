@@ -47,7 +47,6 @@ function handleScroll() {
 }
 
 function handleOobSwap(event) {
-  console.log("handle oob swap", event);
   const elementId = event?.detail?.target?.id;
   if (elementId !== "log-list") return;
 
