@@ -55,12 +55,14 @@ function handleOobSwap(event) {
   }
 }
 
-function setup() {
+function setup(shouldScrollToBottom = false) {
   logList = document.getElementById("log-list");
   if (!logList) return;
 
   scrollLockIndicator = document.getElementById("scroll-lock-indicator");
-  scrollToBottom();
+  if (shouldScrollToBottom) {
+    scrollToBottom();
+  }
 
   logList.addEventListener("scroll", handleScroll);
   document.body.addEventListener("htmx:oobAfterSwap", handleOobSwap);
@@ -71,12 +73,12 @@ function setup() {
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
     if (document.getElementById("log-list")) {
-      setup();
+      setup(true);
     }
   });
 } else {
   if (document.getElementById("log-list")) {
-    setup();
+    setup(true);
   }
 }
 

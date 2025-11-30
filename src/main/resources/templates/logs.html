@@ -31,10 +31,9 @@
           <span
             th:if="${beforeId != null}"
             th:hx-get="@{/{appName}(appName=${appName}, before=${beforeId})}"
-            hx-trigger="intersect once"
-            th:hx-swap="outerHTML"
+            hx-trigger="intersect once threshold:0.5"
+            hx-swap="outerHTML show:bottom"
             hx-select="#log-list>*"
-            th:text="'Before id: ' + ${beforeId}"
           ></span>
           <pre
             th:each="log : ${logs}"
