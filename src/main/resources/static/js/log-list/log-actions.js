@@ -16,5 +16,9 @@ function handleCopyButtonClick(e) {
     close: true,
     gravity: "bottom",
     position: "right",
+    style: {
+      background: "#a6d189", // Frappé green
+      color: "#232634", // Frappé crust
+    },
   }).showToast();
 }
